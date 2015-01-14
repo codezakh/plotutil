@@ -13,7 +13,7 @@ import matplotlib as plt
 import pylab as pyl
 import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
-
+import bisect
 
 
 
@@ -57,3 +57,13 @@ def makePlot_3d(coordinate_list):
     togetherlist = zip(coordinate_list,colormap[:len(coordinate_list)-1]) #creates a tuple list
     for x,y in togetherlist: #associates each set of coordinates with an html color tag
         plotObjectBox_ax.scatter(x[0], x[1],x[2],c=y)
+
+def index(a, x):
+    """Locate the leftmost value exactly equal to x, arg a is list, x=key
+
+    Returns item if found, returns False if item not found,"""
+    i = bisect.bisect_left(a, x)
+    if i != len(a) and a[i] == x:
+        return i
+    else:
+        return False
