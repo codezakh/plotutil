@@ -67,3 +67,25 @@ def index(a, x):
         return i
     else:
         return False
+
+
+def timeTrack_recordnew(datetimeseries):
+    """Takes in a datetimeseries, returns list of skips [(skiplength, index)...]"""
+    breaklist = []
+    mylen = range(0,len(datetimeseries)-1)
+    for x in mylen:
+        if datetimeseries[x+1] != datetimeseries[x]+timedelta(seconds=1):
+            nextstep = x+1
+            breaklist.append([datetimeseries[nextstep]-datetimeseries[x],x])
+        else:
+            continue
+    return breaklist
+
+
+def access_DFrow(indextopull,dataFrameToPullFrom):
+    """access_DFrow(indextopull,dataFrameToPullFrom)-> return row"""
+    listToReturn =[] #list to return
+    for x in dataFrameToPullFrom.keys():
+        TEMP_chainvar = dataFrameToPullFrom[x]
+        listToReturn.append(TEMP_chainvar[indextopull])
+    return listToReturn
