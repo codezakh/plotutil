@@ -14,6 +14,7 @@ import pylab as pyl
 import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 import bisect
+import datetime
 
 
 
@@ -89,3 +90,33 @@ def access_DFrow(indextopull,dataFrameToPullFrom):
         TEMP_chainvar = dataFrameToPullFrom[x]
         listToReturn.append(TEMP_chainvar[indextopull])
     return listToReturn
+
+def pullCertainDate(date,framename,colname='time'):
+    """Returns the index at which a day is found, from a datetime series"""
+     #ensures a string is being entered
+    return index(framename[colname],framename[colname][0].replace(date,0,0))
+
+def example_sliceDF(tupleIndex, frameInUse):
+    """Creates a dataframe bookended by a tuple"""
+    myframe = pd.DataFrame()
+    for x in frameInUse.keys():
+        myframe[x]=frameInUse[x][tupleIndex[0]:tupleIndex[1]:1]
+    return myframe
+
+def SliceMakerByDay(framename,colname='time'):
+    zippedDateSlices = [] #will hold the tuples of start and end indices
+    fullDateIndexList = [] #will hold the list of day indexes
+    for x in range(1,32):
+        fullDateIndexList.append(pullCertainDate(x,framename))
+    for x in range(len(fullDateIndexList)):
+        if x==len(fullDateIndexList)-1:
+            break
+        elif fullDateIndexList[x]==False :
+            continue
+        else:
+            mytuple = (fullDateIndexList[x],fullDateIndexList[x+1])
+            zippedDateSlices.append(mytuple)
+    listofDayFrames = []
+    for x in zippedDateSlices:
+        listofDayFrames.append(examplesliceDF(x,framename))
+    return listofDayFrames
