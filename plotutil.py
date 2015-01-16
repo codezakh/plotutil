@@ -91,23 +91,24 @@ def access_DFrow(indextopull,dataFrameToPullFrom):
         listToReturn.append(TEMP_chainvar[indextopull])
     return listToReturn
 
-def pullCertainDate(date,framename,colname='time'):
-    """Returns the index at which a day is found, from a datetime series"""
-     #ensures a string is being entered
-    return index(framename[colname],framename[colname][0].replace(date,0,0))
+def PullDate(date,framename):
+    timeseries = pd.to_datetime(framename['time'])
+    startdate = timeseries[0]
+    return plotutil.index(timeseries, startdate.replace(day=date,hour=0,second=0,minute=0))
+    
 
-def example_sliceDF(tupleIndex, frameInUse):
+def sliceDF(tupleIndex, frameInUse):
     """Creates a dataframe bookended by a tuple"""
     myframe = pd.DataFrame()
     for x in frameInUse.keys():
         myframe[x]=frameInUse[x][tupleIndex[0]:tupleIndex[1]:1]
     return myframe
-
-def SliceMakerByDay(framename,colname='time'):
+    
+def SliceMaker(framename,colname):
     zippedDateSlices = [] #will hold the tuples of start and end indices
     fullDateIndexList = [] #will hold the list of day indexes
-    for x in range(1,32):
-        fullDateIndexList.append(pullCertainDate(x,framename))
+    for x in range(1,12):
+        fullDateIndexList.append(PullDate(x,framename))
     for x in range(len(fullDateIndexList)):
         if x==len(fullDateIndexList)-1:
             break
@@ -118,5 +119,5 @@ def SliceMakerByDay(framename,colname='time'):
             zippedDateSlices.append(mytuple)
     listofDayFrames = []
     for x in zippedDateSlices:
-        listofDayFrames.append(examplesliceDF(x,framename))
+        listofDayFrames.append(sliceDF(x,framename))
     return listofDayFrames
