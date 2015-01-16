@@ -94,8 +94,9 @@ def access_DFrow(indextopull,dataFrameToPullFrom):
 def PullDate(date,framename):
     timeseries = pd.to_datetime(framename['time'])
     startdate = timeseries[0]
-    return plotutil.index(timeseries, startdate.replace(day=date,hour=0,second=0,minute=0))
+    return index(timeseries, startdate.replace(day=date,hour=0,second=0,minute=0))
     
+
 
 def sliceDF(tupleIndex, frameInUse):
     """Creates a dataframe bookended by a tuple"""
