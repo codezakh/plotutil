@@ -108,7 +108,7 @@ def sliceDF(tupleIndex, frameInUse):
 def SliceMaker(framename,colname):
     zippedDateSlices = [] #will hold the tuples of start and end indices
     fullDateIndexList = [] #will hold the list of day indexes
-    for x in range(1,12):
+    for x in range(1,32):
         fullDateIndexList.append(PullDate(x,framename))
     for x in range(len(fullDateIndexList)):
         if x==len(fullDateIndexList)-1:
