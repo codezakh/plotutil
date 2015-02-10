@@ -15,6 +15,9 @@ import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 import bisect
 import datetime
+import warnings
+from sklearn import cluster
+from hmmlearn import hmm
 
 
 
@@ -122,3 +125,49 @@ def SliceMaker(framename,colname):
     for x in zippedDateSlices:
         listofDayFrames.append(sliceDF(x,framename))
     return listofDayFrames
+
+
+def makeKDE(series,clusnum):
+    """"Series is a series and clusnum is the number of clusters.
+
+
+    Returns a (dataframe,kmeans object)"""
+    stouse = np.array(series.dropna())
+    artouse = np.resize(stouse,(len(stouse),1))
+    kmetouse = cluster.MiniBatchKMeans(n_clusters = clusnum)
+    kmetouse.fit(artouse)
+    predtouse = kmetouse.predict(artouse)
+    frametoret = pd.DataFrame()
+    ziplist = zip(predtouse,stouse)
+    for x in range(clusnum):
+        frametoret[str(x)] = pd.Series([z for y,z in ziplist if y ==x])
+    return frametoret,kmetouse
+
+
+
+def HMMmaker(kclus,DFlist,statenum,s_name):
+	"""Takes in a kmeans object and a list of dataframes containing days."""
+	detlist = []
+	warnings.filterwarnings("ignore", category=DeprecationWarning) 
+	for x in DFlist:
+		benchHMM=hmm.GaussianHMM(n_components=statenum)
+		x['pred'+s_name] = kclus.predict(np.resize(x[s_name],(len(x[s_name]),1)))
+		benchHMM.fit([np.reshape(x['pred'+s_name],(len(x),1))])
+		print np.linalg.det(benchHMM.transmat_)
+		detlist.append(np.linalg.det(benchHMM.transmat_))
+	return detlist
+
+
+
+def proper_convert(nanDaylist):
+	trashlist = []
+	for x in nanDaylist:
+		trashlist.append(x.dropna(subset=['hr','accel_magnitude','skin_temp']))
+	validatedList = []
+	for x in trashlist:
+		if len(x)==0 :
+			print 'Dropped'
+		else:
+			validatedList.append(x)
+	print 'Total dropped:'+str(len(trashlist)-len(validatedList))
+	return validatedList
